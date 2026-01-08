@@ -30,13 +30,17 @@ with col2:
 
 # 그림 선택
 shape_options = {'사과': '🍎', '별': '⭐', '동그라미': '🔵', '하트': '❤️', '네모': '🔲'}
-selected_shape = st.selectbox("시각화할 그림 선택:", list(shape_options.keys()), index=list(shape_options.keys()).index(st.session_state.shape), key='shape_select')
+st.write("시각화할 그림 선택:")
+cols = st.columns(len(shape_options))
+for i, (name, emoji) in enumerate(shape_options.items()):
+    with cols[i]:
+        if st.button(f"{emoji}\n{name}", key=f"shape_{name}"):
+            st.session_state.shape = name
 
 # 시각화 버튼
 if st.button("시각화하기"):
     st.session_state.num1 = num1
     st.session_state.num2 = num2
-    st.session_state.shape = selected_shape
     st.session_state.visualized = True
     st.session_state.checked = False  # 시각화 시 체크 초기화
 
@@ -47,9 +51,9 @@ if st.session_state.visualized:
     shape_emoji = shape_options[st.session_state.shape]
     st.write(f"{st.session_state.num1} × {st.session_state.num2} = ?")
 
-    # 그림 반복 표시 (한 줄에 10개씩)
-    for i in range(0, total, 10):
-        st.write(shape_emoji * min(10, total - i))
+    # 그림 반복 표시 (num1개씩 num2줄)
+    for _ in range(st.session_state.num2):
+        st.write(shape_emoji * st.session_state.num1)
 
     st.write(f"총 {total}개의 {st.session_state.shape}가 있습니다.")
 
@@ -66,6 +70,7 @@ if st.session_state.visualized:
     if st.session_state.checked:
         if st.session_state.user_answer == total:
             st.success("정답입니다! 🎉")
+            st.balloons()  # 풍선 애니메이션 표시
         else:
             st.error(f"틀렸습니다. 정답은 {total}입니다. 😢")
 
